@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مخطط الرد الصوتي التفاعلي (IVR) - شركة هيت السعودية المحدودة</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Tajawal Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        hit: {
+                            navy: '#1b365d',
+                            blue: '#2c5282',
+                            gold: '#d69e2e',
+                            red: '#e53e3e',
+                            green: '#2f855a',
+                            teal: '#319795',
+                            purple: '#6b46c1',
+                            amber: '#dd6b20'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f1f5f9;
+        }
+
+        /* Custom Scrollbars */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        /* Vertical Stacked Hierarchy Tree Styling */
+        .tree-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px;
+            width: 100%;
+            max-width: 950px;
+            margin: 0 auto;
+        }
+
+        .tree-v-node {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            width: 100%;
+        }
+
+        .tree-v-node.root-node {
+            align-items: center;
+        }
+
+        /* Vertical Children Container - Stacked Below Parent */
+        .tree-v-children {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            width: 100%;
+            padding-right: 36px; /* Indent in RTL */
+            margin-top: 16px;
+            border-right: 3px solid #94a3b8; /* Vertical Trunk Line */
+        }
+
+        /* Horizontal branch connector line from vertical trunk to child node */
+        .tree-v-child-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 16px;
+            padding-right: 0;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .tree-v-child-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 24px;
+            right: -36px;
+            width: 38px; /* Extended to overlap and connect directly into card border */
+            height: 3px;
+            background-color: #94a3b8;
+            border-radius: 2px;
+            z-index: 1;
+        }
+
+        /* Root to Level 1 Top Row Layout */
+        .tree-top-row {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            width: 100%;
+            margin-top: 20px;
+            position: relative;
+        }
+
+        /* Card Node Styling */
+        .tree-card {
+            position: relative;
+            z-index: 2;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .tree-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.15);
+        }
+
+        .tree-card.selected {
+            outline: 3px solid #3b82f6;
+            outline-offset: 2px;
+        }
+
+        /* Speaking Pulse Animation */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 6px rgba(255, 255, 255, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+        .tts-btn-speaking {
+            animation: pulse-ring 1.5s infinite;
+            background-color: #ffffff !important;
+            color: #1b365d !important;
+        }
+
+        /* Print styles */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-full {
+                width: 100% !important;
+                max-width: 100% !important;
+                overflow: visible !important;
+            }
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden text-slate-800">
+
+    <!-- Top Navigation & Control Header -->
+    <header class="bg-hit-navy text-white px-6 py-3 shadow-md flex-none flex flex-wrap justify-between items-center z-30 gap-3 no-print">
+        <div class="flex items-center space-x-3 space-x-reverse">
+            <div class="bg-blue-600 p-2 rounded-xl text-white shadow-inner">
+                <i class="fa-solid fa-diagram-project text-xl"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-lg leading-tight">مخطط ومحرر الرد الصوتي التفاعلي (IVR Visualizer)</h1>
+                <p class="text-xs text-blue-200">شركة هيت السعودية المحدودة لخدمات مكافحة الحشرات، الزراعة، والنظافة</p>
+            </div>
+        </div>
+
+        <!-- Mode Toggle & Global Controls -->
+        <div class="flex items-center gap-3">
+            <!-- Female Voice Tone Selector -->
+            <div class="bg-slate-800/80 px-2.5 py-1 rounded-xl flex items-center gap-1.5 border border-slate-700" title="اختيار نبرة الصوت الأنثوي السعودي">
+                <i class="fa-solid fa-microphone-lines text-pink-400 text-xs"></i>
+                <select id="voice-selector" onchange="changeVoiceTone(this.value)" class="bg-transparent text-xs font-bold text-white focus:outline-none cursor-pointer">
+                    <option value="Sulafat" class="text-slate-900">صوت أنثوي دافئ (سعودي)</option>
+                    <option value="Aoede" class="text-slate-900">صوت أنثوي هادئ (سعودي)</option>
+                    <option value="Leda" class="text-slate-900">صوت أنثوي حيوي (سعودي)</option>
+                </select>
+            </div>
+
+            <!-- Mode Selector -->
+            <div class="bg-slate-800/80 p-1 rounded-xl flex items-center border border-slate-700">
+                <button id="mode-workhours" onclick="switchShift('workhours')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow">
+                    <i class="fa-solid fa-sun me-1"></i> أوقات العمل الرسمية
+                </button>
+                <button id="mode-afterhours" onclick="switchShift('afterhours')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition-all">
+                    <i class="fa-solid fa-moon me-1"></i> خارج أوقات العمل
+                </button>
+            </div>
+
+            <!-- Action Buttons -->
+            <button onclick="exportToWord()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-file-word text-sm"></i> تصدير Word
+            </button>
+            <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-print text-sm"></i> طباعة / PDF
+            </button>
+            <button onclick="resetDefaultData()" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3 py-2 rounded-xl shadow flex items-center gap-1.5 transition" title="استعادة الشجرة الأصلية">
+                <i class="fa-solid fa-arrow-rotate-left"></i> افتراضي
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Workspace (Split Screen Layout) -->
+    <main class="flex-1 flex overflow-hidden relative">
+
+        <!-- SIDE A: Editor & Controls Panel -->
+        <aside class="w-full lg:w-[420px] xl:w-[460px] bg-white border-l border-slate-200 flex flex-col flex-none shadow-xl z-20 no-print">
+            
+            <!-- Editor Subheader -->
+            <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                <h2 class="font-bold text-slate-700 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square text-blue-600"></i> محرر محتوى وتدرج IVR
+                </h2>
+                <span id="selected-node-badge" class="text-xs bg-blue-100 text-blue-800 font-bold px-2.5 py-0.5 rounded-full truncate max-w-[180px]">
+                    محدد: الترحيب الرئيسي
+                </span>
+            </div>
+
+            <!-- Scrollable Form Panel -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+
+                <!-- Active Node Edit Form -->
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">
+                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">تفاصيل الخيار المحدد</h3>
+                    
+                    <!-- Node Label & Key -->
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">عنوان القائمة / القسم</label>
+                            <input type="text" id="edit-title" oninput="updateActiveNode()" class="w-full text-xs font-semibold px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">زر الهاتف (DTMF)</label>
+                            <input type="text" id="edit-key" oninput="updateActiveNode()" class="w-full text-xs font-bold text-center px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Audio Script Text -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-xs font-bold text-slate-700">نص التسجيل الصوتي المسموع (Audio Script)</label>
+                            <button type="button" id="btn-auto-tashkeel" onclick="autoDiacritizeScript()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold px-2.5 py-1 rounded-lg shadow-sm transition flex items-center gap-1.5" title="ضبط التشكيل ليناسب النطق باللهجة السعودية البيضاء">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> تشكيل باللهجة السعودية
+                            </button>
+                        </div>
+                        <textarea id="edit-script" oninput="updateActiveNode()" rows="4" class="w-full text-xs p-3 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none leading-relaxed" placeholder="أدخل نص الرد الصوتي المسموع للعميل..."></textarea>
+                        
+                        <!-- Quick Manual Diacritics Bar -->
+                        <div class="flex items-center justify-between mt-1.5 bg-white border border-slate-200 rounded-lg px-2 py-1">
+                            <span class="text-[10px] font-bold text-slate-500">حركات يدوية سريعة:</span>
+                            <div class="flex items-center gap-1" dir="rtl">
+                                <button type="button" onclick="insertDiacritic('َ')" class="w-6 h-6 rounded bg-slate-100 hover:bg-blue-100 text-slate-800 font-bold text-sm flex items-center justify-center transition" title="فتحة">ـَ</button>
+                                <button type="button" onclick="insertDiacritic('ُ')" class="w-6 h-6 rounded bg-slate-100 hover:bg-blue-100 text-slate-800 font-bold text-sm flex items-center justify-center transition" title="ضمة">ـُ</button>
+                                <button type="button" onclick="insertDiacritic('ِ')" class="w-6 h-6 rounded bg-slate-100 hover:bg-blue-100 text-slate-800 font-bold text-sm flex items-center justify-center transition" title="كسرة">ـِ</button>
+                                <button type="button" onclick="insertDiacritic('ْ')" class="w-6 h-6 rounded bg-slate-100 hover:bg-blue-100 text-slate-800 font-bold text-sm flex items-center justify-center transition" title="سكون">ـْ</button>
+                                <button type="button" onclick="insertDiacritic('ّ')" class="w-6 h-6 rounded bg-slate-100 hover:bg-blue-100 text-slate-800 font-bold text-sm flex items-center justify-center transition" title="شدة">ـّ</button>
+                                <button type="button" onclick="insertDiacritic('ً')" class="w-6 h-6 rounded bg-slate-100 hover:bg-blue-100 text-slate-800 font-bold text-sm flex items-center justify-center transition" title="تنوين فتح">ـً</button>
+                                <button type="button" onclick="insertDiacritic('ٌ')" class="w-6 h-6 rounded bg-slate-100 hover:bg-blue-100 text-slate-800 font-bold text-sm flex items-center justify-center transition" title="تنوين ضم">ـٌ</button>
+                                <button type="button" onclick="insertDiacritic('ٍ')" class="w-6 h-6 rounded bg-slate-100 hover:bg-blue-100 text-slate-800 font-bold text-sm flex items-center justify-center transition" title="تنوين كسر">ـٍ</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Routing Logic & Emergency -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">وجهة التحويل (Routing Target)</label>
+                            <input type="text" id="edit-target" oninput="updateActiveNode()" class="w-full text-xs px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="مثال: مشرف الطوارئ">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">النمط / اللون</label>
+                            <select id="edit-color" onchange="updateActiveNode()" class="w-full text-xs px-3 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                                <option value="navy">أزرق داكن (رئيسي)</option>
+                                <option value="red">أحمر (طوارئ عاجلة)</option>
+                                <option value="blue">أزرق (مكافحة الآفات)</option>
+                                <option value="green">أخضر (خدمات زراعية)</option>
+                                <option value="teal">تركوازي (نظافة وتعقيم)</option>
+                                <option value="amber">برتقالي (مبيعات وعقود)</option>
+                                <option value="purple">بنفسجي (مالية / أخرى)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Actions on Active Node -->
+                    <div class="pt-2 flex flex-wrap gap-2 border-t border-slate-200">
+                        <button onclick="addChildNode()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 px-3 rounded-lg shadow transition flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-plus"></i> إضافة خيار فرعي
+                        </button>
+                        <button onclick="deleteActiveNode()" id="btn-delete-node" class="bg-rose-100 hover:bg-rose-200 text-rose-700 text-xs font-bold py-2 px-3 rounded-lg transition flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-trash-can"></i> حذف
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tree Hierarchy Structure View in Editor -->
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 shadow-sm">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider">شجرة التسلسل الهيكلي</h3>
+                        <span class="text-[10px] bg-slate-200 text-slate-600 font-bold px-2 py-0.5 rounded">انقر للتحديد والتعديل</span>
+                    </div>
+                    <div id="tree-editor-list" class="space-y-1 max-h-80 overflow-y-auto pl-1 custom-scrollbar">
+                        <!-- Dynamic Nested List Rendered via JS -->
+                    </div>
+                </div>
+
+                <!-- Quick Tips Card -->
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-900 leading-relaxed flex items-start gap-2.5">
+                    <i class="fa-solid fa-lightbulb text-blue-600 text-base flex-none mt-0.5"></i>
+                    <div>
+                        <strong>تلميح التعديل والتمرير: يمكنك تدوير عجلة المماوس فوق لوحة المخطط للتمرير الجانبي، أو التحرير الفوري من لوحة التحكم اليمين.</strong>
+                    </div>
+                </div>
+
+            </div>
+        </aside>
+
+        <!-- SIDE B: Live Visual Tree Diagram Panel -->
+        <section class="flex-1 bg-slate-100 flex flex-col overflow-hidden relative print-full min-w-0">
+            
+            <!-- Toolbar for Diagram Zoom & Controls -->
+            <div class="bg-white/90 backdrop-blur border-b border-slate-200 px-4 py-2 flex justify-between items-center z-10 shadow-sm no-print">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-bold text-slate-700">المخطط الهيكلي الرأسي (Vertical Workflow)</span>
+                    <span class="text-[11px] bg-slate-200 text-slate-700 font-bold px-2 py-0.5 rounded-full" id="shift-label-indicator">أوقات العمل الرسمية</span>
+                </div>
+                
+                <!-- Zooming Controls -->
+                <div class="flex items-center gap-2">
+                    <button onclick="zoomTree(0.1)" class="w-7 h-7 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg flex items-center justify-center text-slate-700 text-xs shadow-sm" title="تكبير">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                    </button>
+                    <button onclick="resetZoom()" class="px-2 h-7 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg flex items-center justify-center text-slate-700 text-xs font-bold shadow-sm" id="zoom-level-text">
+                        100%
+                    </button>
+                    <button onclick="zoomTree(-0.1)" class="w-7 h-7 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg flex items-center justify-center text-slate-700 text-xs shadow-sm" title="تصغير">
+                        <i class="fa-solid fa-magnifying-glass-minus"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Viewport Container with Complete Independent Scrolling and Mouse Wheel Fix -->
+            <div class="flex-1 overflow-auto custom-scrollbar p-6 relative w-full h-full" id="tree-viewport">
+                <div id="visual-tree-root" class="tree-container transition-transform duration-200 origin-top pb-24">
+                    <!-- Dynamic Tree Elements Rendered Here Vertically -->
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Application Script Engine -->
+    <script>
+        // Default Master Data Structure for Hit Saudi Arabia Ltd. (Saudi White Dialect Phrasing)
+        const defaultWorkHoursData = {
+            id: 'root',
+            title: 'رسالة الترحيب واختيار اللغة',
+            key: '00',
+            script: 'حَيَّاكُم الله فِي شَرِكَة هِيت السُّعُودِيَّة المَحْدُودَة لِخَدَمَات مُكَافَحَة الحَشَرَات، وَالزِّرَاعَة، وَالنَّظَافَة. Arabic press 1, for English press 2.',
+            target: 'قائمة اختيار اللغة',
+            color: 'navy',
+            children: [
+                {
+                    id: 'arabic-menu',
+                    title: 'القائمة الرئيسية (اللغة العربية)',
+                    key: '1',
+                    script: 'عَزِيزِي العَمِيل، عَشَان نِوَجِّه مُكَالَمْتَك لِلْقِسْم المُخْتَصّ: لِلْبَلَاغَات الطَّارِئَة وَالحَالَات العَاجْلَة لِلْمَصَانِع وَالشَّرِكَات اضْغَط رَقَم وَاحِد، لِخَدَمَات عُقُود وَتَأْمِين مُكَافَحَة الآفَات وَالحَشَرَات اضْغَط رَقَم اثْنِين، لِلْخَدَمَات الزِّرَاعِيَّة وَتَنْسِيق وَصِيَانَة الحَدَائِق اضْغَط رَقَم ثَلَاثَة، لِخَدَمَات النَّظَافَة العَامَّة وَالتَّعْقِيم اضْغَط رَقَم أَرْبَعَة، لِلْمَبِيعَات وَالعُقُود الجِدِيدَة وَالمُنَاقَصَات اضْغَط رَقَم خَمْسَة، لِلِاسْتِفْسَار عَن الإِدَارَة المَالِيَّة وَالحِسَابَات اضْغَط رَقَم سِتَّة، وَلِلتَّحَدُّث مَع أَحَد مُمَثِّلِي خِدْمَة العُمَلَاء اضْغَط رَقَم صِفْر أَو ابْقَ عَلَى الخَطّ.',
+                    target: 'المستوى الثاني - الخيارات',
+                    color: 'blue',
+                    children: [
+                        {
+                            id: 'opt-1',
+                            title: 'البلاغات الطارئة والعاجلة',
+                            key: '1',
+                            script: 'اخْتَرْت قِسْم البَلَاغَات الطَّارِئَة. هَذَا القِسْم مُخَصَّص لِلشَّرِكَات وَالمَصَانِع وَالقِطَاعَات الغِذَائِيَّة وَالتِّجَارِيَّة. جَارِي تَحْوِيل مُكَالَمْتَك فَوْراً إِلَى مُشْرِف الطَّوَارِئ المُنَاوِب... نَرْجُو مِنْك البَقَاء عَلَى الخَطّ.',
+                            target: 'تحويل مباشر لمشرف الطوارئ',
+                            color: 'red',
+                            children: []
+                        },
+                        {
+                            id: 'opt-2',
+                            title: 'مكافحة الآفات والحشرات',
+                            key: '2',
+                            script: 'لِخَدَمَات مُكَافَحَة الآفَات وَالحَشَرَات: لِلْمَبَانِي السَّكَنِيَّة وَالمَنَازِل اضْغَط وَاحِد. لِلْمُنْشَآت التِّجَارِيَّة وَالمَطَاعِم وَالمَصَانِع اضْغَط اثْنِين. لِلْمُتَابَعَة مَع المُهَنْدِس المُخْتَصّ بِزِيَارَة سَابْقَة اضْغَط ثَلَاثَة. وَلِلْعَوْدَة لِلْقَائِمَة الرَّئِيسِيَّة اضْغَط نَجْمَة.',
+                            target: 'قسم مكافحة الآفات',
+                            color: 'blue',
+                            children: [
+                                { id: 'opt-2-1', title: 'المباني السكنية والمنازل', key: '1', script: 'جَارِي تَحْوِيلَك لِفَرِيق خَدَمَات القِطَاع السَّكَنِي...', target: 'فريق السكني', color: 'blue', children: [] },
+                                { id: 'opt-2-2', title: 'المنشآت التجارية والمصانع', key: '2', script: 'جَارِي تَحْوِيلَك لِإِدَارَة العُقُود التِّجَارِيَّة وَالصِّنَاعِيَّة...', target: 'قسم العقود التجارية', color: 'blue', children: [] },
+                                { id: 'opt-2-3', title: 'متابعة زيارة مهندس سابق', key: '3', script: 'جَارِي تَحْوِيلَك لِمَسْؤُول الدَّعْم وَالمُتَابَعَة الفَنِّيَّة...', target: 'الدعم الفني الميداني', color: 'blue', children: [] }
+                            ]
+                        },
+                        {
+                            id: 'opt-3',
+                            title: 'الخدمات الزراعية وتنسيق الحدائق',
+                            key: '3',
+                            script: 'لِلْخَدَمَات الزِّرَاعِيَّة: لِتَنْسِيق الحَدَائِق وَالمَشَارِيع الجِدِيدَة اضْغَط وَاحِد. لِخَدَمَات الصِّيَانَة الدَّوْرِيَّة وَشَبَكَات الرَّيّ اضْغَط اثْنِين. لِمُكَافَحَة الآفَات الزِّرَاعِيَّة وَالنَّخِيل اضْغَط ثَلَاثَة. وَلِلْعَوْدَة لِلْقَائِمَة الرَّئِيسِيَّة اضْغَط نَجْمَة.',
+                            target: 'القسم الزراعي',
+                            color: 'green',
+                            children: [
+                                { id: 'opt-3-1', title: 'تنسيق الحدائق والمشاريع', key: '1', script: 'جَارِي تَحْوِيلَك لِمُهَنْدِسِي التَّصْمِيم وَالمَشَارِيع الزِّرَاعِيَّة...', target: 'مهندسي المشاريع', color: 'green', children: [] },
+                                { id: 'opt-3-2', title: 'الصيانة وشبكات الري', key: '2', script: 'جَارِي تَحْوِيلَك لِمُشْرِف صِيَانَة الحَدَائِق وَالرَّيّ...', target: 'مشرف شبكات الري', color: 'green', children: [] },
+                                { id: 'opt-3-3', title: 'آفات النخيل والزراعة', key: '3', script: 'جَارِي تَحْوِيلَك لِأَخِصَّائِي مُكَافَحَة الآفَات الزِّرَاعِيَّة...', target: 'أخصائي زراعي', color: 'green', children: [] }
+                            ]
+                        },
+                        {
+                            id: 'opt-4',
+                            title: 'خدمات النظافة العامة والتعقيم',
+                            key: '4',
+                            script: 'لِخَدَمَات النَّظَافَة وَالتَّعْقِيم: لِنَظَافَة المَبَانِي وَالمَقَرَّات بَعْد التَّشْطِيب اضْغَط وَاحِد. لِعُقُود النَّظَافَة الدَّوْرِيَّة لِلْمَكَاتِب وَالشَّرِكَات اضْغَط اثْنِين. لِنَظَافَة الوَاجِهَات الزُّجَاجِيَّة وَالتَّعْقِيم التَّخَصُّصِي اضْغَط ثَلَاثَة. وَلِلْعَوْدَة لِلْقَائِمَة الرَّئِيسِيَّة اضْغَط نَجْمَة.',
+                            target: 'قسم النظافة والتعقيم',
+                            color: 'teal',
+                            children: [
+                                { id: 'opt-4-1', title: 'نظافة المباني بعد التشطيب', key: '1', script: 'جَارِي تَحْوِيلَك لِمُشْرِف مَشَارِيع التَّشْطِيب وَالتَّعْقِيم...', target: 'فريق التشطيبات', color: 'teal', children: [] },
+                                { id: 'opt-4-2', title: 'عقود النظافة الدورية للمكاتب', key: '2', script: 'جَارِي تَحْوِيلَك لِإِدَارَة عُقُود النَّظَافَة...', target: 'عقود النظافة', color: 'teal', children: [] },
+                                { id: 'opt-4-3', title: 'الواجهات والتعقيم التخصصي', key: '3', script: 'جَارِي تَحْوِيلَك لِفَرِيق الخَدَمَات التَّخَصُّصِيَّة...', target: 'فريق الارتفاعات والتعقيم', color: 'teal', children: [] }
+                            ]
+                        },
+                        {
+                            id: 'opt-5',
+                            title: 'المبيعات والعقود والمناقصات',
+                            key: '5',
+                            script: 'لِقِسْم المَبِيعَات وَالعُقُود: لِطَلَب زِيَارَة مُعَايَنَة مَيْدَانِيَّة أَو طَلَب عَرْض سِعْر اضْغَط وَاحِد. لِمُتَابَعَة المُنَاقَصَات وَمَشَارِيع التَّأْهِيل كَمُقَاوِل بَاطِن اضْغَط اثْنِين. وَلِلتَّحَدُّث مَع أَحَد اسْتِشَارِيِّي المَبِيعَات اضْغَط صِفْر.',
+                            target: 'إدارة المبيعات',
+                            color: 'amber',
+                            children: [
+                                { id: 'opt-5-1', title: 'طلب معاينة أو عرض سعر', key: '1', script: 'جَارِي تَحْوِيلَك لِمَسْؤُول المُعَايَنَات المَيْدَانِيَّة وَعُرُوض الأَسْعَار...', target: 'مسؤول عروض الأسعار', color: 'amber', children: [] },
+                                { id: 'opt-5-2', title: 'المناقصات وتأهيل المقاولين', key: '2', script: 'جَارِي تَحْوِيلَك لِإِدَارَة العُقُود وَالمُنَاقَصَات...', target: 'إدارة المناقصات', color: 'amber', children: [] },
+                                { id: 'opt-5-0', title: 'استشاري مبيعات', key: '0', script: 'جَارِي تَحْوِيلَك لِأَحَد اسْتِشَارِيِّي المَبِيعَات...', target: 'ممثل المبيعات', color: 'amber', children: [] }
+                            ]
+                        },
+                        {
+                            id: 'opt-6',
+                            title: 'الإدارة المالية والحسابات',
+                            key: '6',
+                            script: 'لِلِاسْتِفْسَار عَن الإِدَارَة المَالِيَّة وَالحِسَابَات، جَارِي تَحْوِيل مُكَالَمْتَك لِمَسْؤُول الحِسَابَات...',
+                            target: 'قسم الحسابات والمالية',
+                            color: 'purple',
+                            children: []
+                        },
+                        {
+                            id: 'opt-0',
+                            title: 'خدمة العملاء / الاستقبال',
+                            key: '0',
+                            script: 'جَارِي تَحْوِيل مُكَالَمْتَك لِأَحَد مُمَثِّلِي خِدْمَة العُمَلَاء... نَرْجُو الِانْتِظَار.',
+                            target: 'مجموعة الاتصال الجماعي (Hunt Group)',
+                            color: 'navy',
+                            children: []
+                        }
+                    ]
+                },
+                {
+                    id: 'english-menu',
+                    title: 'English Language Menu',
+                    key: '2',
+                    script: 'Welcome to Hit Saudi Arabia Limited. For Emergency press 1, Pest Control press 2, Agriculture press 3, Cleaning press 4, Sales press 5, Customer Service press 0.',
+                    target: 'English IVR Routing',
+                    color: 'purple',
+                    children: []
+                }
+            ]
+        };
+
+        const defaultAfterHoursData = {
+            id: 'root-after',
+            title: 'رسالة الترحيب (خارج أوقات العمل)',
+            key: '00',
+            script: 'حَيَّاكُم الله فِي شَرِكَة هِيت السُّعُودِيَّة المَحْدُودَة. نِوَدّ إِحَاطَتْكُم بِأَنَّكُم اتَّصَلْتُم خَارِج أَوْقَات العَمَل الرَّسْمِيَّة. أَوْقَات العَمَل مِن الأَحَد إِلَى الخَمِيس، مِن السَّاعَة الثَّامِنَة صَبَاحاً وَحَتَّى الخَامِسَة مَسَاءً.',
+            target: 'نظام الرد الآلي الليلي',
+            color: 'amber',
+            children: [
+                {
+                    id: 'after-1',
+                    title: 'بلاغ طارئ لمنشأة تجارية / صناعية',
+                    key: '1',
+                    script: 'إِذَا كَانَت المُكَالَمَة تَخُصّ بَلَاغ طَارِئ لِمُنْشَأَة تِجَارِيَّة أَو صِنَاعِيَّة، جَارِي تَحْوِيلَك فَوْراً لِلْمُشْرِف المُنَاوِب...',
+                    target: 'جوال مشرف الطوارئ المناوب',
+                    color: 'red',
+                    children: []
+                },
+                {
+                    id: 'after-2',
+                    title: 'ترك رسالة صوتية (Voicemail)',
+                    key: '2',
+                    script: 'لِتَرْك رِسَالَة صَوْتِيَّة، اتْرُك اسْمَك وَرَقْم جَوَّالَك وَرَاح نِعَاوِد الِاتِّصَال فِيك فَوْر بَدْء سَاعَات العَمَل الجَايَة.',
+                    target: 'صندوق البريد الصوتي',
+                    color: 'blue',
+                    children: []
+                },
+                {
+                    id: 'after-3',
+                    title: 'التواصل عبر الواتساب',
+                    key: '3',
+                    script: 'كَمَا تِقْدَر تِرَاسِلْنَا عَبْر الوَاتْسَاب عَلَى نَفْس هَذَا الرَّقْم.',
+                    target: 'رابط الواتساب الآلي',
+                    color: 'green',
+                    children: []
+                }
+            ]
+        };
+
+        // State Variables
+        let currentShift = 'workhours';
+        let activeNodeId = 'root';
+        let zoomLevel = 1.0;
+        let speakingNodeId = null;
+        let loadingNodeId = null;
+        let currentAudio = null;
+        let selectedVoiceName = 'Sulafat';
+        const audioUrlCache = new Map();
+
+        function changeVoiceTone(voiceName) {
+            selectedVoiceName = voiceName;
+            stopAllAudio();
+        }
+
+        let workHoursData = JSON.parse(localStorage.getItem('hit_ivr_workhours')) || JSON.parse(JSON.stringify(defaultWorkHoursData));
+        let afterHoursData = JSON.parse(localStorage.getItem('hit_ivr_afterhours')) || JSON.parse(JSON.stringify(defaultAfterHoursData));
+
+        // Base64 to ArrayBuffer helper
+        function base64ToArrayBuffer(base64) {
+            const binaryString = window.atob(base64);
+            const len = binaryString.length;
+            const bytes = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        // Convert Signed PCM16 to WAV Blob
+        function pcmToWav(pcm16, sampleRate = 24000) {
+            const numChannels = 1;
+            const bitsPerSample = 16;
+            const byteRate = sampleRate * numChannels * (bitsPerSample / 8);
+            const blockAlign = numChannels * (bitsPerSample / 8);
+            const dataSize = pcm16.byteLength;
+            const buffer = new ArrayBuffer(44 + dataSize);
+            const view = new DataView(buffer);
+
+            const writeString = (offset, str) => {
+                for (let i = 0; i < str.length; i++) {
+                    view.setUint8(offset + i, str.charCodeAt(i));
+                }
+            };
+
+            writeString(0, 'RIFF');
+            view.setUint32(4, 36 + dataSize, true);
+            writeString(8, 'WAVE');
+            writeString(12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true); // PCM format
+            view.setUint16(22, numChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, byteRate, true);
+            view.setUint16(32, blockAlign, true);
+            view.setUint16(34, bitsPerSample, true);
+            writeString(36, 'data');
+            view.setUint32(40, dataSize, true);
+
+            const pcmBytes = new Uint8Array(pcm16.buffer);
+            new Uint8Array(buffer, 44).set(pcmBytes);
+
+            return new Blob([buffer], { type: 'audio/wav' });
+        }
+
+        // Stop any active audio playback
+        function stopAllAudio() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+                currentAudio = null;
+            }
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+            }
+            speakingNodeId = null;
+            loadingNodeId = null;
+            updateTTSButtonsUI();
+        }
+
+        // Fetch Gemini TTS Audio with Exponential Backoff
+        async function fetchGeminiTTSAudio(cleanText, isEnglishText) {
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+
+            const stylePrompt = isEnglishText
+                ? `Speak in a warm, polite, crystal-clear feminine corporate IVR voice:\n\n${cleanText}`
+                : `تَكَلَّمِي بِصَوْتِ امْرَأَةٍ سُعُودِيَّةٍ دَافِئٍ وَمُهَذَّبٍ وَواضِحٍ جِدّاً كَمُوَظَّفَةِ خِدْمَةِ عُمَلَاءَ فِي المَمْلَكَةِ العَرَبِيَّةِ السُّعُودِيَّةِ، بِاللَّهْجَةِ السُّعُودِيَّةِ البَيْضَاءِ الطَّبِيعِيَّةِ السَّلِسَةِ (بِدُونِ تَكَلُّفٍ أَوْ تَفْخِيمٍ فُصْحَوِيٍّ ثَقِيلٍ)، مَعَ النُّطْقِ السَّلِيمِ لِلْحَرَكَاتِ وَالتَّوَقُّفِ الهَادِئِ عِنْدَ الفَوَاصِلِ:\n\n${cleanText}`;
+
+            const payload = {
+                contents: [{
+                    parts: [{ text: stylePrompt }]
+                }],
+                generationConfig: {
+                    responseModalities: ["AUDIO"],
+                    speechConfig: {
+                        voiceConfig: {
+                            prebuiltVoiceConfig: { voiceName: selectedVoiceName }
+                        }
+                    }
+                },
+                model: "gemini-2.5-flash-preview-tts"
+            };
+
+            const delays = [1000, 2000, 4000];
+            for (let attempt = 0; attempt <= delays.length; attempt++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        if (attempt < delays.length && (response.status === 429 || response.status >= 500)) {
+                            await new Promise(r => setTimeout(r, delays[attempt]));
+                            continue;
+                        }
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const part = result?.candidates?.[0]?.content?.parts?.[0];
+                    const audioData = part?.inlineData?.data;
+                    const mimeType = part?.inlineData?.mimeType;
+
+                    if (audioData && mimeType && mimeType.startsWith("audio/")) {
+                        const rateMatch = mimeType.match(/rate=(\d+)/);
+                        const sampleRate = rateMatch ? parseInt(rateMatch[1], 10) : 24000;
+                        const pcmBuffer = base64ToArrayBuffer(audioData);
+                        const pcm16 = new Int16Array(pcmBuffer);
+                        const wavBlob = pcmToWav(pcm16, sampleRate);
+                        return URL.createObjectURL(wavBlob);
+                    }
+                    throw new Error("Missing audio payload");
+                } catch (err) {
+                    if (attempt < delays.length) {
+                        await new Promise(r => setTimeout(r, delays[attempt]));
+                        continue;
+                    }
+                    throw err;
+                }
+            }
+        }
+
+        // Fallback Browser Female Speech Synthesis
+        function speakWithBrowserFallback(nodeId, cleanText, isEnglishText) {
+            if (!('speechSynthesis' in window)) return;
+            const voices = window.speechSynthesis.getVoices();
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            const femaleVoice = isEnglishText
+                ? voices.find(v => v.lang.startsWith('en') && /female|zira|samantha|victoria/i.test(v.name))
+                : voices.find(v => v.lang.toLowerCase().includes('ar') && /female|zariyah|salma|fatima|laila|hoda|mariam/i.test(v.name));
+
+            if (femaleVoice) {
+                utterance.voice = femaleVoice;
+                utterance.lang = femaleVoice.lang;
+            } else {
+                utterance.lang = isEnglishText ? 'en-US' : 'ar-SA';
+            }
+            utterance.pitch = 1.12;
+            utterance.rate = 0.94;
+
+            utterance.onstart = () => {
+                loadingNodeId = null;
+                speakingNodeId = nodeId;
+                updateTTSButtonsUI();
+            };
+            utterance.onend = () => {
+                speakingNodeId = null;
+                updateTTSButtonsUI();
+            };
+            utterance.onerror = () => {
+                speakingNodeId = null;
+                updateTTSButtonsUI();
+            };
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Speak or Stop Node Script
+        async function toggleSpeakNode(event, nodeId) {
+            event.stopPropagation();
+
+            // If currently speaking or loading this node, stop it
+            if (speakingNodeId === nodeId || loadingNodeId === nodeId) {
+                stopAllAudio();
+                return;
+            }
+
+            stopAllAudio();
+
+            const rootData = getActiveTreeData();
+            const node = findNodeById(rootData, nodeId);
+            if (!node || !node.script) return;
+
+            // Normalize symbols and numbers for natural Arabic vocalization
+            const cleanText = node.script
+                .replace(/\(\*\)/g, 'نَجْمَة')
+                .replace(/\(Quotation\)/gi, 'عَرْضِ سِعْرٍ')
+                .replace(/\(Subcontractor\)/gi, 'مُقَاوِلِ بَاطِنٍ')
+                .replace(/\(Voicemail\)/gi, '')
+                .replace(/\(Hunt Group\)/gi, '')
+                .replace(/\.\.\./g, '، ');
+
+            const isEnglishText = /^[A-Za-z0-9\s.,!?'"-]+$/.test(cleanText.trim());
+            const cacheKey = `${selectedVoiceName}::${nodeId}::${cleanText}`;
+
+            const playAudioUrl = (url) => {
+                const audio = new Audio(url);
+                currentAudio = audio;
+                loadingNodeId = null;
+                speakingNodeId = nodeId;
+                updateTTSButtonsUI();
+
+                audio.onended = () => {
+                    if (speakingNodeId === nodeId) {
+                        speakingNodeId = null;
+                        currentAudio = null;
+                        updateTTSButtonsUI();
+                    }
+                };
+                audio.onerror = () => {
+                    speakingNodeId = null;
+                    currentAudio = null;
+                    updateTTSButtonsUI();
+                };
+                audio.play().catch(() => {
+                    speakingNodeId = null;
+                    updateTTSButtonsUI();
+                });
+            };
+
+            // Play from cache immediately if unchanged
+            if (audioUrlCache.has(cacheKey)) {
+                playAudioUrl(audioUrlCache.get(cacheKey));
+                return;
+            }
+
+            loadingNodeId = nodeId;
+            updateTTSButtonsUI();
+
+            try {
+                const wavUrl = await fetchGeminiTTSAudio(cleanText, isEnglishText);
+                // Verify user didn't cancel while generating
+                if (loadingNodeId !== nodeId) return;
+                audioUrlCache.set(cacheKey, wavUrl);
+                playAudioUrl(wavUrl);
+            } catch (e) {
+                if (loadingNodeId !== nodeId) return;
+                loadingNodeId = null;
+                speakWithBrowserFallback(nodeId, cleanText, isEnglishText);
+            }
+        }
+
+        function updateTTSButtonsUI() {
+            document.querySelectorAll('.tts-play-btn').forEach(btn => {
+                const btnNodeId = btn.getAttribute('data-node-id');
+                if (btnNodeId === loadingNodeId) {
+                    btn.classList.remove('tts-btn-speaking');
+                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-[10px]"></i>';
+                    btn.title = 'جاري توليد الصوت الأنثوي المشكول...';
+                } else if (btnNodeId === speakingNodeId) {
+                    btn.classList.add('tts-btn-speaking');
+                    btn.innerHTML = '<i class="fa-solid fa-stop text-[10px]"></i>';
+                    btn.title = 'إيقاف الصوت';
+                } else {
+                    btn.classList.remove('tts-btn-speaking');
+                    btn.innerHTML = '<i class="fa-solid fa-volume-high text-[10px]"></i>';
+                    btn.title = 'استماع للنص بصوت أنثوي مشكول بدقة';
+                }
+            });
+        }
+
+        // Initialize Application & Wheel Listener
+        document.addEventListener('DOMContentLoaded', () => {
+            setupWheelScroll();
+            renderApp();
+        });
+
+        // Mouse Wheel & Horizontal Scroll Handling Setup
+        function setupWheelScroll() {
+            const viewport = document.getElementById('tree-viewport');
+            if (!viewport) return;
+
+            viewport.addEventListener('wheel', (e) => {
+                // If user holds Shift, native horizontal scroll takes over
+                if (e.shiftKey) return;
+                
+                // Convert vertical scroll wheel (deltaY) into horizontal scrolling
+                if (e.deltaY !== 0) {
+                    viewport.scrollLeft += e.deltaY;
+                }
+            }, { passive: true });
+        }
+
+        function getActiveTreeData() {
+            return currentShift === 'workhours' ? workHoursData : afterHoursData;
+        }
+
+        function switchShift(shift) {
+            stopAllAudio();
+            currentShift = shift;
+            
+            // Toggle Button Styles
+            const btnWork = document.getElementById('mode-workhours');
+            const btnAfter = document.getElementById('mode-afterhours');
+            const labelIndicator = document.getElementById('shift-label-indicator');
+
+            if (shift === 'workhours') {
+                btnWork.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-blue-600 text-white shadow';
+                btnAfter.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition-all';
+                labelIndicator.textContent = 'أوقات العمل الرسمية';
+                activeNodeId = workHoursData.id;
+            } else {
+                btnAfter.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-amber-600 text-white shadow';
+                btnWork.className = 'px-3 py-1.5 rounded-lg text-xs font-bold text-slate-300 hover:text-white transition-all';
+                labelIndicator.textContent = 'خارج أوقات العمل الرسمية';
+                activeNodeId = afterHoursData.id;
+            }
+
+            renderApp();
+        }
+
+        // Render Master UI
+        function renderApp() {
+            saveDataToLocalStorage();
+            const rootData = getActiveTreeData();
+
+            // Make sure activeNodeId is valid
+            let activeNode = findNodeById(rootData, activeNodeId);
+            if (!activeNode) {
+                activeNodeId = rootData.id;
+                activeNode = rootData;
+            }
+
+            // Populate Form
+            populateForm(activeNode);
+
+            // Render Editor List View
+            renderEditorList(rootData);
+
+            // Render Visual Tree Diagram
+            renderVisualTree(rootData);
+        }
+
+        // Save data to localStorage
+        function saveDataToLocalStorage() {
+            localStorage.setItem('hit_ivr_workhours', JSON.stringify(workHoursData));
+            localStorage.setItem('hit_ivr_afterhours', JSON.stringify(afterHoursData));
+        }
+
+        // Find Node Helper
+        function findNodeById(node, id) {
+            if (node.id === id) return node;
+            if (node.children && node.children.length > 0) {
+                for (let child of node.children) {
+                    let res = findNodeById(child, id);
+                    if (res) return res;
+                }
+            }
+            return null;
+        }
+
+        // Populate Form Fields
+        function populateForm(node) {
+            document.getElementById('selected-node-badge').textContent = `خيار: ${node.title}`;
+            document.getElementById('edit-title').value = node.title || '';
+            document.getElementById('edit-key').value = node.key || '';
+            document.getElementById('edit-script').value = node.script || '';
+            document.getElementById('edit-target').value = node.target || '';
+            document.getElementById('edit-color').value = node.color || 'blue';
+
+            // Disable delete button for root node
+            const btnDelete = document.getElementById('btn-delete-node');
+            if (node.id === 'root' || node.id === 'root-after') {
+                btnDelete.disabled = true;
+                btnDelete.classList.add('opacity-40', 'cursor-not-allowed');
+            } else {
+                btnDelete.disabled = false;
+                btnDelete.classList.remove('opacity-40', 'cursor-not-allowed');
+            }
+        }
+
+        // Update Active Node on Typing
+        function updateActiveNode() {
+            const rootData = getActiveTreeData();
+            let node = findNodeById(rootData, activeNodeId);
+            if (!node) return;
+
+            node.title = document.getElementById('edit-title').value;
+            node.key = document.getElementById('edit-key').value;
+            node.script = document.getElementById('edit-script').value;
+            node.target = document.getElementById('edit-target').value;
+            node.color = document.getElementById('edit-color').value;
+
+            // Live Refresh without full form reload
+            saveDataToLocalStorage();
+            renderEditorList(rootData);
+            renderVisualTree(rootData);
+        }
+
+        // Insert Manual Diacritic at Cursor Position
+        function insertDiacritic(mark) {
+            const textarea = document.getElementById('edit-script');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+
+            textarea.value = text.substring(0, start) + mark + text.substring(end);
+            textarea.selectionStart = textarea.selectionEnd = start + mark.length;
+            textarea.focus();
+            updateActiveNode();
+        }
+
+        // Auto-Diacritize Arabic Text using Gemini API
+        async function autoDiacritizeScript() {
+            const textarea = document.getElementById('edit-script');
+            const btn = document.getElementById('btn-auto-tashkeel');
+            const rawText = textarea.value.trim();
+
+            if (!rawText) return;
+
+            const originalBtnHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري التشكيل...';
+
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{
+                    parts: [{
+                        text: `قم بتشكيل النص العربي التالي تشكيلاً يناسب النطق الصحيح باللهجة السعودية البيضاء المهذبة للرد الصوتي الآلي (IVR)، بحيث تُضبط حركات الحروف لتُقرأ بسلاسة وطبيعية باللكنة السعودية البيضاء دون تكلف. حافظ على أي كلمات إنجليزية أو أرقام أو رموز كما هي دون تغيير، وأعد النص المشكول فقط دون أي مقدمات أو شروحات:\n\n${rawText}`
+                    }]
+                }],
+                systemInstruction: {
+                    parts: [{
+                        text: "أنت خبير صوتي ولغوي متخصص في اللهجة السعودية البيضاء وضبط تشكيل النصوص للرد الصوتي الآلي (IVR) لضمان نطق أنثوي سعودي طبيعي وسلس. أعد النص المشكول فقط."
+                    }]
+                }
+            };
+
+            const delays = [1000, 2000, 4000];
+            try {
+                for (let attempt = 0; attempt <= delays.length; attempt++) {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        if (attempt < delays.length && (response.status === 429 || response.status >= 500)) {
+                            await new Promise(r => setTimeout(r, delays[attempt]));
+                            continue;
+                        }
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const diacritizedText = result?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+                    if (diacritizedText) {
+                        textarea.value = diacritizedText;
+                        updateActiveNode();
+                    }
+                    break;
+                }
+            } catch (err) {
+                // Silent fail on network/throttle error while restoring button state
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalBtnHTML;
+            }
+        }
+
+        // Select Node
+        function selectNode(id) {
+            activeNodeId = id;
+            const rootData = getActiveTreeData();
+            const node = findNodeById(rootData, id);
+            if (node) {
+                populateForm(node);
+                renderEditorList(rootData);
+                highlightVisualNode(id);
+            }
+        }
+
+        // Add Child Node
+        function addChildNode() {
+            const rootData = getActiveTreeData();
+            let parent = findNodeById(rootData, activeNodeId);
+            if (!parent) return;
+
+            const newId = 'node-' + Date.now();
+            const newNode = {
+                id: newId,
+                title: 'خيار فرعي جديد',
+                key: (parent.children.length + 1).toString(),
+                script: 'أدخل نص الرد الصوتي المسموع للعميل...',
+                target: 'تحويل لقسم جديد',
+                color: parent.color || 'blue',
+                children: []
+            };
+
+            parent.children.push(newNode);
+            activeNodeId = newId;
+            renderApp();
+        }
+
+        // Delete Active Node
+        function deleteActiveNode() {
+            const rootData = getActiveTreeData();
+            if (activeNodeId === 'root' || activeNodeId === 'root-after') {
+                alert('لا يمكن حذف الرسالة الترحيبية الرئيسية.');
+                return;
+            }
+
+            function removeNode(parent, id) {
+                if (!parent.children) return false;
+                const index = parent.children.findIndex(c => c.id === id);
+                if (index !== -1) {
+                    parent.children.splice(index, 1);
+                    return true;
+                }
+                for (let child of parent.children) {
+                    if (removeNode(child, id)) return true;
+                }
+                return false;
+            }
+
+            if (confirm('هل أنت تأكد من حذف هذا الخيار وكافة الخيارات الفرعية التابعة له؟')) {
+                removeNode(rootData, activeNodeId);
+                activeNodeId = rootData.id;
+                renderApp();
+            }
+        }
+
+        // Render Tree in Editor Panel (Nested List)
+        function renderEditorList(rootNode) {
+            const container = document.getElementById('tree-editor-list');
+            container.innerHTML = createEditorNodeHTML(rootNode);
+        }
+
+        function createEditorNodeHTML(node, level = 0) {
+            const isSelected = node.id === activeNodeId;
+            const paddingRight = level * 16;
+            
+            let colorBadgeClass = 'bg-blue-500';
+            if(node.color === 'red') colorBadgeClass = 'bg-red-500';
+            if(node.color === 'green') colorBadgeClass = 'bg-emerald-500';
+            if(node.color === 'teal') colorBadgeClass = 'bg-teal-500';
+            if(node.color === 'amber') colorBadgeClass = 'bg-amber-500';
+            if(node.color === 'purple') colorBadgeClass = 'bg-purple-500';
+            if(node.color === 'navy') colorBadgeClass = 'bg-slate-800';
+
+            let html = `
+                <div onclick="selectNode('${node.id}')" 
+                     style="margin-right: ${paddingRight}px;" 
+                     class="flex items-center justify-between p-2 rounded-lg cursor-pointer text-xs transition-all border ${isSelected ? 'bg-blue-50 border-blue-400 font-bold text-blue-900 shadow-sm' : 'bg-white hover:bg-slate-100 border-slate-200 text-slate-700'}">
+                    <div class="flex items-center gap-2 overflow-hidden">
+                        <span class="w-5 h-5 flex-none rounded-full ${colorBadgeClass} text-white flex items-center justify-center font-bold text-[10px]">
+                            ${node.key || '#'}
+                        </span>
+                        <span class="truncate">${node.title || 'بدون عنوان'}</span>
+                    </div>
+                    ${node.children && node.children.length > 0 ? `<span class="text-[10px] bg-slate-200 text-slate-600 px-1.5 py-0.5 rounded-full font-bold">${node.children.length}</span>` : ''}
+                </div>
+            `;
+
+            if (node.children && node.children.length > 0) {
+                html += node.children.map(c => createEditorNodeHTML(c, level + 1)).join('');
+            }
+            return html;
+        }
+
+        // Color maps for node styling
+        const colorThemes = {
+            navy: { bg: 'bg-slate-800', border: 'border-slate-700', text: 'text-white', badge: 'bg-slate-900 text-white' },
+            red: { bg: 'bg-red-600', border: 'border-red-700', text: 'text-white', badge: 'bg-white text-red-700' },
+            blue: { bg: 'bg-blue-600', border: 'border-blue-700', text: 'text-white', badge: 'bg-blue-950 text-white' },
+            green: { bg: 'bg-emerald-600', border: 'border-emerald-700', text: 'text-white', badge: 'bg-emerald-950 text-white' },
+            teal: { bg: 'bg-teal-600', border: 'border-teal-700', text: 'text-white', badge: 'bg-teal-950 text-white' },
+            amber: { bg: 'bg-amber-600', border: 'border-amber-700', text: 'text-white', badge: 'bg-amber-950 text-white' },
+            purple: { bg: 'bg-purple-600', border: 'border-purple-700', text: 'text-white', badge: 'bg-purple-950 text-white' }
+        };
+
+        // Render Vertical Stacked Tree Diagram
+        function renderVisualTree(rootNode) {
+            const container = document.getElementById('visual-tree-root');
+            container.innerHTML = createVerticalTreeNodeHTML(rootNode, true);
+            highlightVisualNode(activeNodeId);
+        }
+
+        // Recursive Vertical Node Builder
+        function createVerticalTreeNodeHTML(node, isRoot = false) {
+            const hasChildren = node.children && node.children.length > 0;
+            const theme = colorThemes[node.color] || colorThemes.blue;
+            const isSelected = node.id === activeNodeId;
+            const isSpeaking = node.id === speakingNodeId;
+
+            const cardHTML = `
+                <div id="vnode-${node.id}" onclick="selectNode('${node.id}')" 
+                     class="tree-card ${isRoot ? 'w-80' : 'w-72'} ${theme.bg} ${theme.text} ${theme.border} border-2 rounded-xl p-3 shadow-md cursor-pointer ${isSelected ? 'selected' : ''}">
+                    
+                    <div class="flex items-center justify-between gap-2 border-b border-white/20 pb-1.5 mb-1.5">
+                        <span class="w-6 h-6 rounded-full ${theme.badge} font-bold text-xs flex items-center justify-center shadow-inner flex-none">
+                            ${node.key || '#'}
+                        </span>
+                        <h4 class="font-bold text-xs leading-tight text-right flex-1 truncate" title="${node.title}">
+                            ${node.title}
+                        </h4>
+                        <button type="button" 
+                                data-node-id="${node.id}"
+                                onclick="toggleSpeakNode(event, '${node.id}')" 
+                                class="tts-play-btn w-6 h-6 rounded-full bg-white/20 hover:bg-white/35 text-white flex items-center justify-center transition flex-none shadow-sm ${isSpeaking ? 'tts-btn-speaking' : ''}" 
+                                title="استماع للنص بصوت نسائي سعودي">
+                            <i class="fa-solid ${isSpeaking ? 'fa-stop' : 'fa-volume-high'} text-[10px]"></i>
+                        </button>
+                    </div>
+
+                    <div class="text-[11px] bg-black/15 rounded-lg p-2 mb-1.5 line-clamp-3 leading-relaxed text-right font-normal">
+                        "${node.script || '...'}"
+                    </div>
+
+                    <div class="flex items-center justify-between text-[10px] font-semibold opacity-90">
+                        <span class="truncate"><i class="fa-solid fa-headset me-1"></i> ${node.target || 'تحويل تلقائي'}</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] opacity-70"></i>
+                    </div>
+                </div>
+            `;
+
+            if (isRoot) {
+                let rootChildrenHTML = '';
+                if (hasChildren) {
+                    rootChildrenHTML = `
+                        <div class="tree-v-children">
+                            ${node.children.map(child => `
+                                <div class="tree-v-child-wrapper">
+                                    ${createVerticalTreeNodeHTML(child, false)}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="tree-v-node root-node">
+                        ${cardHTML}
+                        ${rootChildrenHTML}
+                    </div>
+                `;
+            }
+
+            // Child nodes recursively stacked vertically under parent
+            if (hasChildren) {
+                return `
+                    <div class="tree-v-node">
+                        ${cardHTML}
+                        <div class="tree-v-children">
+                            ${node.children.map(child => `
+                                <div class="tree-v-child-wrapper">
+                                    ${createVerticalTreeNodeHTML(child, false)}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            return cardHTML;
+        }
+
+        function highlightVisualNode(id) {
+            document.querySelectorAll('.tree-card').forEach(el => {
+                el.classList.remove('selected');
+            });
+            const activeEl = document.getElementById(`vnode-${id}`);
+            if (activeEl) {
+                activeEl.classList.add('selected');
+                // Scroll the diagram automatically to display the selected card centered
+                activeEl.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'center'
+                });
+            }
+        }
+
+        // Zoom Controls
+        function zoomTree(delta) {
+            zoomLevel = Math.min(Math.max(0.4, zoomLevel + delta), 1.8);
+            document.getElementById('visual-tree-root').style.transform = `scale(${zoomLevel})`;
+            document.getElementById('zoom-level-text').textContent = `${Math.round(zoomLevel * 100)}%`;
+        }
+
+        function resetZoom() {
+            zoomLevel = 1.0;
+            document.getElementById('visual-tree-root').style.transform = `scale(1)`;
+            document.getElementById('zoom-level-text').textContent = `100%`;
+        }
+
+        // Reset to Default Data
+        function resetDefaultData() {
+            if (confirm('هل أنت تأكد من إعادة جميع النصوص والهيكل إلى الوضع الافتراضي لشركة هيت؟')) {
+                localStorage.removeItem('hit_ivr_workhours');
+                localStorage.removeItem('hit_ivr_afterhours');
+                workHoursData = JSON.parse(JSON.stringify(defaultWorkHoursData));
+                afterHoursData = JSON.parse(JSON.stringify(defaultAfterHoursData));
+                activeNodeId = 'root';
+                renderApp();
+            }
+        }
+
+        // Export to Word Document (.doc format)
+        function exportToWord() {
+            const rootData = getActiveTreeData();
+            const shiftTitle = currentShift === 'workhours' ? 'أوقات العمل الرسمية' : 'خارج أوقات العمل الرسمية';
+
+            var header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
+                "xmlns:w='urn:schemas-microsoft-com:office:word' " +
+                "xmlns='http://www.w3.org/TR/REC-html40'>" +
+                "<head><meta charset='utf-8'><title>IVR Workflow Export</title><style>" +
+                "body { font-family: 'Segoe UI', Tahoma, Arial, sans-serif; direction: rtl; text-align: right; font-size: 11pt; line-height: 1.5; }" +
+                "h1 { color: #1b365d; text-align: center; font-size: 18pt; border-bottom: 2px solid #1b365d; padding-bottom: 8px; }" +
+                "h2 { color: #2c5282; font-size: 14pt; margin-top: 20px; }" +
+                "table { border-collapse: collapse; width: 100%; margin-top: 10px; margin-bottom: 20px; }" +
+                "th, td { border: 1px solid #cbd5e1; padding: 8px 12px; text-align: right; vertical-align: top; font-size: 10pt; }" +
+                "th { background-color: #1b365d; color: white; font-weight: bold; }" +
+                ".badge { background-color: #e2e8f0; color: #1e293b; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 9pt; }" +
+                ".script-box { background-color: #f8fafc; border-right: 3px solid #3b82f6; padding: 8px 12px; margin: 4px 0; font-style: italic; color: #334155; }" +
+                "</style></head><body>";
+
+            var content = "<h1>مخطط وسيناريو الرد الصوتي التفاعلي (IVR)</h1>";
+            content += "<p style='text-align: center; color: #64748b; font-weight: bold;'>شركة هيت السعودية المحدودة لخدمات مكافحة الحشرات، الزراعة، والنظافة</p>";
+            content += "<p><strong>نمط التشغيل:</strong> " + shiftTitle + " | <strong>تاريخ التصدير:</strong> " + new Date().toLocaleDateString('ar-SA') + "</p>";
+
+            content += "<h2>جدول تفاصيل الرد الصوتي والتحويلات</h2>";
+            content += "<table>";
+            content += "<thead><tr><th style='width: 8%;'>الزر</th><th style='width: 25%;'>القسم / الخيار</th><th style='width: 47%;'>نص التسجيل الصوتي (Audio Script)</th><th style='width: 20%;'>وجهة التحويل</th></tr></thead>";
+            content += "<tbody>";
+
+            function appendNodeRow(node, depth = 0) {
+                const indent = "&nbsp;&nbsp;&nbsp;&nbsp;".repeat(depth);
+                const prefix = depth > 0 ? "├─ " : "";
+                
+                content += "<tr>";
+                content += "<td style='text-align: center;'><span class='badge'>" + (node.key || '-') + "</span></td>";
+                content += "<td>" + indent + prefix + "<strong>" + node.title + "</strong></td>";
+                content += "<td><div class='script-box'>\"" + node.script + "\"</div></td>";
+                content += "<td>" + node.target + "</td>";
+                content += "</tr>";
+
+                if (node.children && node.children.length > 0) {
+                    node.children.forEach(c => appendNodeRow(c, depth + 1));
+                }
+            }
+
+            appendNodeRow(rootData);
+
+            content += "</tbody></table>";
+            var footer = "</body></html>";
+            var html = header + content + footer;
+
+            var blob = new Blob(['\ufeff' + html], {
+                type: 'application/msword'
+            });
+
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.href = url;
+            a.download = 'IVR_Workflow_Hit_Saudi_' + (currentShift === 'workhours' ? 'WorkHours' : 'AfterHours') + '.doc';
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>
